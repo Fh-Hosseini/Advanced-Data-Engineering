@@ -14,8 +14,8 @@ pipeline AirportsPipeline {
 
 
     // Below the pipes, we usually define the blocks that are connected by the pipes.
-    block AirportsExtractor oftype LocalFileExtractor {
-        filePath: "rhein-kreis-neuss-flughafen-weltweit.csv";
+    block AirportsExtractor oftype HttpExtractor {
+        url: "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-flughafen-weltweit/exports/csv?lang=en&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B";
     }
 
     block AirportsTextFileInterpreter oftype TextFileInterpreter {}
