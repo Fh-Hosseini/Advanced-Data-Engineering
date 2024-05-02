@@ -1,4 +1,4 @@
-// TThis Jayvee model describes a pipeline from a CSV file to a SQLite file sink.
+// This Jayvee model describes a pipeline from a CSV file to a SQLite file sink.
 
 pipeline AirportsPipeline {
 
