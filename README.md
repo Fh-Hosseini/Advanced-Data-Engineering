@@ -1,6 +1,6 @@
 # Exercise Badges
 
-![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/tree/main/score_ex1) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex2) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex3) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex4) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex5)
+![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex1) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex2) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex3) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex4) ![](https://byob.yarr.is/Fh-Hosseini/Advanced-Data-Engineering/score_ex5)
 
 # Methods of Advanced Data Engineering Template Project
 
