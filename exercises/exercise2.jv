@@ -17,7 +17,7 @@ pipeline TreePlanting {
     block TreeTableInterpreter oftype TableInterpreter {
         header: true;
         columns: [
-            "lfd_nr" oftype text,
+            "lfd_nr" oftype integer,
             "stadtteil" oftype stadtteil,
             "standort" oftype text,
             "baumart_botanisch" oftype text,
