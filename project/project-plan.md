@@ -30,7 +30,7 @@ The datasets in this project will be first cleaned and preprocessed, so that the
 * Data URL: https://climatedata.imf.org/datasets/b84a7e25159b4c65ba62d3f82c605855/explore
 * Data Type: CSV
 
-Short description of the DataSource.
+Annual estimates of mean surface temperature change measured with respect to a baseline climatology.
 
 ## Work Packages
 
