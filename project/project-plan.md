@@ -3,7 +3,7 @@
 ## Title
 <!-- Give your project a short title. -->
 Climate Change: 
-Analysis of the effect of forest and land areas on global temperature change and global warming.
+Analysis of the effect of forest and land areas on global temperature change and global warming
 
 ## Main Question
 
