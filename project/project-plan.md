@@ -23,6 +23,7 @@ The aim of this project is to use advanced data engineering methods to investiga
 * Metadata URL: https://climatedata.imf.org/datasets/4063314923d74187be9596f10d034914/explore
 * Data URL: https://opendata.arcgis.com/datasets/4063314923d74187be9596f10d034914_0.csv
 * Data Type: CSV
+
 This indicator presents the mean surface temperature change during the period 1961-2021, using temperatures between 1951 and 1980 as a baseline. Use the drop-down menus to search for temperature changes by country.
 This data is provided by the Food and Agriculture Organization Corporate Statistical Database (FAOSTAT) and is based on publicly available GISTEMP data from the National Aeronautics and Space Administration Goddard Institute for Space Studies (NASA GISS).
 Annual estimates of mean surface temperature change measured with respect to a baseline climatology, corresponding to the period 1951-1980.
@@ -31,6 +32,7 @@ Annual estimates of mean surface temperature change measured with respect to a b
 * Metadata URL: https://climatedata.imf.org/datasets/66dad9817da847b385d3b2323ce1be57/explore
 * Data URL: https://opendata.arcgis.com/datasets/66dad9817da847b385d3b2323ce1be57_0.csv
 * Data Type: CSV
+
 Forests contain the largest stock of land-based carbon. Changes in forests, both in their extent and condition, can lead to low carbon storage and result in faster global warming. Indices on the extent of forests and carbon stored in forests provide a high-level summary of the state of forests across countries.
 
 
