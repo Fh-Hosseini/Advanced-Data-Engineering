@@ -1,0 +1,98 @@
+pipeline GoodsTransportedByTrain {
+
+
+    // Describe the structure of the pipeline, by connecting blocks via pipes. 
+    GoodsDataExtractor
+        -> GoodsTextFileInterpreter
+        -> GoodsCSVInterpreter
+        -> GoodsRowDeleter
+        -> GoodsColumnDeleter
+        -> GoodsTableInterpreter
+        -> GoodsDataLoader;
+
+
+    // Extracte the data as a HTTP file 
+    block GoodsDataExtractor oftype HttpExtractor {
+        url: "https://www-genesis.destatis.de/genesis/downloads/00/tables/46131-0014_00.csv";
+    }
+
+    // Interpret the file as a text file with an encoding that is suitable for german words
+    block GoodsTextFileInterpreter oftype TextFileInterpreter {
+        encoding: "latin3";
+    }
+
+    // Next, we interpret the text file as sheet.
+    block GoodsCSVInterpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+
+    // Delete rows Remove metadata rows (initial description and headers [data starts in row 9], copyright notice in the footer)
+    block GoodsRowDeleter oftype RowDeleter {
+        delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7, row 8, row 41337, row 41338, row 41339];
+    }
+
+
+    // Delete unnecessary columns from data sheet
+    block GoodsColumnDeleter oftype ColumnDeleter {
+        delete: [column F, column G, column H, column I, column J, column K, column L, column M, column N,
+                 column O, column P, column Q, column R, column S, column T, column U, column V, column W, 
+                 column X, column Y, column Z, column AA, column AB, column AC, column AD, column AE, 
+                 column AF, column AG, column AH, column AI, column AJ, column AK, column AL, column AM, 
+                 column AN, column AO, column AP, column AQ, column AR, column AS];
+    }
+
+
+    // Define valid values for month, it must be in Capital German
+    valuetype monthsType oftype text {
+        constraints: [monthsList];
+    }
+
+    constraint monthsList oftype AllowlistConstraint {
+        allowlist: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    }
+
+
+    // Define the valid value for goodsid, it must start with NST7-, followed by three numbers or capital letters
+    valuetype idType oftype text {
+        constraints: [goodsIdRegex];
+    }
+
+    constraint goodsIdRegex oftype RegexConstraint {
+        regex: /^NST7-[0-9A-Z]{3}$/;
+    }
+
+
+    // Define the valid value for Numeric values, they must be positive integers
+    valuetype positiveIntegerType oftype integer {
+        constraints: [positiveNumber];
+    }
+
+    constraint positiveNumber oftype RangeConstraint {
+        lowerBound: 0;
+    }
+
+
+    // Interprete the sheet into table by defining a valuetype per column that specifies the data type of the column
+    // Rows that include values that are not valid according to the their valuetypes are dropped automatically
+    block GoodsTableInterpreter oftype TableInterpreter {
+        header: false;
+        columns: [
+            "year" oftype positiveIntegerType,
+            "month" oftype monthsType,
+            "goods_id" oftype idType,
+            "goods_name" oftype text,
+            "goods_source" oftype text,
+            "abroad" oftype positiveIntegerType,
+            "total" oftype positiveIntegerType,
+        ];
+    }
+
+
+    // Use this block to load the cleaned Table into SQLite file
+    block GoodsDataLoader oftype SQLiteLoader {
+        table: "goods";
+        file: "./goodsTransportedByTrain.sqlite";
+    }
+
+}
