@@ -1,0 +1,101 @@
+pipeline Temperatures {
+
+
+    // Describe the structure of the pipeline, by connecting blocks via pipes. 
+    TemperaturesDataExtractor
+        -> TemperaturesZipArchiveInterpreter
+        -> TemperaturesFilePicker
+        -> TemperaturesTextFileInterpreter
+        -> TemperaturesCSVInterpreter
+        -> TemperaturesDataSelector
+        -> TemperaturesColumnDeleter
+        -> TemperaturesTableInterpreter
+        -> TemperatureTransformer
+        -> BatteryTemperatureTransformer
+        -> TemperaturesDataLoader;
+
+
+    // Extracte the csv data in Zip File as a HTTP file
+    block TemperaturesDataExtractor oftype HttpExtractor {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+
+    block TemperaturesZipArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+     block TemperaturesFilePicker oftype FilePicker {
+        path: "/data.csv";
+    }
+
+    // Interpret the file as a text file
+    block TemperaturesTextFileInterpreter oftype TextFileInterpreter {}
+
+    // Next, we interpret the text file as sheet
+    block TemperaturesCSVInterpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+
+    // Delete unnecessary columns from data sheet
+    block TemperaturesDataSelector oftype CellRangeSelector {
+        select: range A1:K*;
+    }
+
+    block TemperaturesColumnDeleter oftype ColumnDeleter {
+        delete: [column F, column G, column H, column I];
+    }
+
+
+    // Define the valid value for Numeric values, they must be positive integers
+    valuetype positiveIntegerType oftype integer {
+        constraints: [positiveNumber];
+    }
+
+    constraint positiveNumber oftype RangeConstraint {
+        lowerBound: 0;
+        lowerBoundInclusive: false;
+    }
+
+    // Interprete the sheet into table by defining a valuetype per column that specifies the data type of the column
+    // Rows that include values that are not valid according to the their valuetypes are dropped automatically
+    block TemperaturesTableInterpreter oftype TableInterpreter {
+        header: false;
+        columns: [
+            "id" oftype positiveIntegerType,
+            "producer" oftype text,
+            "model" oftype text,
+            "month" oftype integer,
+            "temperature" oftype decimal,
+            "battery_temperature" oftype decimal,
+        ];
+    }
+
+
+    // Convert temoeratures from Celsius to Farenheit and apply it to 'temperature' and 'battery_temperature' columns
+    transform CelsiusToFahrenheit {
+    from TemperatureInCelsius oftype decimal;
+    to TemperatureInFahrenheit oftype decimal;
+    TemperatureInFahrenheit: (TemperatureInCelsius * 9.5) + 32;
+    }
+
+    block TemperatureTransformer oftype TableTransformer {
+        inputColumns: ['temperature'];
+        outputColumn: 'temperature';
+        use: CelsiusToFahrenheit;
+    }
+
+    block BatteryTemperatureTransformer oftype TableTransformer {
+        inputColumns: ['battery_temperature'];
+        outputColumn: 'battery_temperature';
+        use: CelsiusToFahrenheit;
+    }
+    
+
+    // Use this block to load the cleaned Table into SQLite file
+    block TemperaturesDataLoader oftype SQLiteLoader {
+        table: "temperatures";
+        file: "./temperatures.sqlite";
+    }
+
+}
