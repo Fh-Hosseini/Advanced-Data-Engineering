@@ -132,6 +132,8 @@ def analyse_pipeline(df_temperature, df_forest):
     
     for table_name, df in df_climate_change.items():
         load_sql(df, table_name, database_path)
+    
+    return df_climate_change
 
 
 def main():
