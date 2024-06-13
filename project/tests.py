@@ -55,6 +55,23 @@ class TestPipeline(unittest.TestCase):
         
         # Check if the dataframe saves correctly and it is not empty
         assert not df.empty
+    
+    
+    def test_analyse_pipeline(self):
+        url = "https://opendata.arcgis.com/datasets/4063314923d74187be9596f10d034914_0.csv"
+        df_temperature = etl_pipeline(url, "test_temperature", [])
+        
+        url2 = "https://opendata.arcgis.com/datasets/66dad9817da847b385d3b2323ce1be57_0.csv"
+        df_forest = etl_pipeline(url, "test_forest", [])
+
+        dfs_climate = analyse_pipeline(df_temperature, df_forest)
+        
+        for table_name, df in dfs_climate.items():
+            # Check if it returns a pandas data frame
+            assert isinstance(df, pd.DataFrame)
+        
+            # Check if the dataframe saves correctly and it is not empty
+            assert not df.empty
         
         
 if __name__ == '__main__':
