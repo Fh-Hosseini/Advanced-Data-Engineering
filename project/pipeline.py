@@ -89,6 +89,23 @@ def load_sql(data, table_name, database_path):
     conn.close()
     
     
+def get_datasets(df_temperature, df_forest):
+    
+    # Keep common countries of two data frame
+    countries = pd.merge(df_temperature, df_forest, on='Country', how='inner')['Country']
+    df_temperature = df_temperature[df_temperature['Country'].isin(countries)]
+    df_forest = df_forest[df_forest['Country'].isin(countries)]
+    
+    # Extract different data frames based on their Indicator
+    unique_indicators = df_forest['Indicator'].unique()
+    df_climate_change = {}
+    for indicator in unique_indicators:
+        df_climate_change[indicator] = df_forest[df_forest['Indicator'] == indicator]
+    df_climate_change['Temperature'] = df_temperature
+    
+    return df_climate_change
+
+    
 # The ETL pipeline to Extract, Transform and Load the data into SQLite database
 def etl_pipeline(data_url, table_name, unused_columns):
     
@@ -107,6 +124,16 @@ def etl_pipeline(data_url, table_name, unused_columns):
     return df
     
 
+# Use this pipeline to extract data frames from the two main Annual_Surface_Temperature and Forest_and_Carbon data frames
+# based on different indicators
+def analyse_pipeline(df_temperature, df_forest):
+    database_path = get_database_path()
+    df_climate_change = get_datasets(df_temperature, df_forest)
+    
+    for table_name, df in df_climate_change.items():
+        load_sql(df, table_name, database_path)
+
+
 def main():
     # Define data sources and names related to Annual_Surface_Temperature dataset
     temperatur_url = "https://opendata.arcgis.com/datasets/4063314923d74187be9596f10d034914_0.csv"
@@ -120,6 +147,8 @@ def main():
     unused_columns = ['ObjectId', 'ISO2', 'ISO3', 'Source', 'CTS_Code', 'CTS_Name', 'CTS_Full_Descriptor']
     df_forest = etl_pipeline(forest_url, table_forest_name, unused_columns)
 
+    analyse_pipeline(df_temperature, df_forest)
+    
 
 if __name__ == "__main__":
     main()
