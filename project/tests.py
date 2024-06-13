@@ -21,6 +21,7 @@ class TestPipeline(unittest.TestCase):
         # Check the size of the data frame
         assert df.shape == (2, 3)
 
+    
     def test_transform(self):
         # Create a mock data frame and apply transformations on it using the Preprocessor class
         df = pd.DataFrame([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, np.nan, np.nan], [12, 13, np.nan, 15]], columns=['column0', 'column1', 'column2', 'column3'])
