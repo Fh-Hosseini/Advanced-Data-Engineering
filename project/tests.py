@@ -21,7 +21,6 @@ class TestPipeline(unittest.TestCase):
         # Check the size of the data frame
         assert df.shape == (2, 3)
 
-    
     def test_transform(self):
         # Create a mock data frame and apply transformations on it using the Preprocessor class
         df = pd.DataFrame([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, np.nan, np.nan], [12, 13, np.nan, 15]], columns=['column0', 'column1', 'column2', 'column3'])
@@ -44,6 +43,18 @@ class TestPipeline(unittest.TestCase):
         conn.close()
         
         assert_frame_equal(result, df)
+        
+    
+    def test_etl_pipeline(self):
+        url = "https://opendata.arcgis.com/datasets/4063314923d74187be9596f10d034914_0.csv"
+        unused_columns = ['ObjectId', 'ISO2', 'ISO3', 'Indicator', 'Unit', 'Source', 'CTS_Code', 'CTS_Name', 'CTS_Full_Descriptor']
+        df = etl_pipeline(url, "test_temperature", unused_columns)
+
+        # Check if it returns a pandas data frame
+        assert isinstance(df, pd.DataFrame)
+        
+        # Check if the dataframe saves correctly and it is not empty
+        assert not df.empty
         
         
 if __name__ == '__main__':
