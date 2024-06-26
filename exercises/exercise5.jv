@@ -1,0 +1,76 @@
+pipeline GTFS {
+
+
+    // Describe the structure of the pipeline, by connecting blocks via pipes
+    GTFSDataExtractor
+        -> GTFSZipArchiveInterpreter
+        -> GTFSFilePicker
+        -> GTFSTextFileInterpreter
+        -> GTFSCSVInterpreter
+        -> GTFSTableInterpreter
+        -> GTFSDataLoader;
+
+
+    // Extracte the csv data in a local Zip File
+    block GTFSDataExtractor oftype HttpExtractor {
+        url: "https://gtfs.rhoenenergie-bus.de/GTFS.zip";
+    }
+
+    block GTFSZipArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+     block GTFSFilePicker oftype FilePicker {
+        path: "/stops.txt";
+    }
+
+    // Interpret the file as a text file
+    block GTFSTextFileInterpreter oftype TextFileInterpreter {}
+
+    // Next, we interpret the text file as sheet
+    block GTFSCSVInterpreter oftype CSVInterpreter {
+        enclosing: '"';
+    }
+
+
+    // Define the valid value for stop_lat and stop_lon, they must be decimal numbers in the range of (-90, 90)
+    valuetype geographic_coordinates oftype decimal {
+        constraints: [valid_coordinates];
+    }
+
+    constraint valid_coordinates oftype RangeConstraint {
+        lowerBound: -90;
+        upperBound: 90;
+    }
+
+
+    // Define the valid value for zone_id, they must be 1645
+    valuetype zone oftype text {
+        constraints: [valid_zone];
+    }
+
+    constraint valid_zone oftype AllowlistConstraint  {
+        allowlist: ["1645"];
+    }
+
+    // Interprete the sheet into table by defining a valuetype per column that specifies the data type of the column
+    // Rows that include values that are not valid according to the their valuetypes are dropped automatically
+    block GTFSTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "stop_id" oftype integer,
+            "stop_name" oftype text,
+            "stop_lat" oftype geographic_coordinates,
+            "stop_lon" oftype geographic_coordinates,
+            "zone_id" oftype zone,
+        ];
+    }
+    
+
+    // Use this block to load the cleaned Table into SQLite file
+    block GTFSDataLoader oftype SQLiteLoader {
+        table: "stops";
+        file: "./gtfs.sqlite";
+    }
+
+}
