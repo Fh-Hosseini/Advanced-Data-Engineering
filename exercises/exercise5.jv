@@ -45,13 +45,13 @@ pipeline GTFS {
 
 
     // Define the valid value for zone_id, they must be 1645
-    valuetype zone oftype text {
+    valuetype zone oftype integer {
         constraints: [valid_zone];
     }
 
-    constraint valid_zone oftype AllowlistConstraint  {
-        allowlist: ["1645"];
-    }
+    constraint valid_zone on integer:
+        value == 1645;
+        
 
     // Interprete the sheet into table by defining a valuetype per column that specifies the data type of the column
     // Rows that include values that are not valid according to the their valuetypes are dropped automatically
