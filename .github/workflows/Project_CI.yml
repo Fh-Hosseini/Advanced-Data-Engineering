@@ -28,7 +28,7 @@ jobs:
       # Install Libraries and Requirements
       - name: Install Requirements
         run: |
-          pip install -r requirements.txt
+          pip install -r ./project/requirements.txt
       
       # Run grading feedback
       - name: Run Tests
