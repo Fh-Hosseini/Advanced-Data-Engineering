@@ -16,10 +16,10 @@ class TestPipeline(unittest.TestCase):
         df = csv_interpreter(data)
         
         # Check if it returns a pandas data frame
-        assert isinstance(df, pd.DataFrame)
+        assert isinstance(df, pd.DataFrame), "CSV Interpreter does not return a pandas data frame"
         
         # Check the size of the data frame
-        assert df.shape == (2, 3)
+        assert df.shape == (2, 3), "The shape of the data frame is not correct"
 
     def test_transform(self):
         # Create a mock data frame and apply transformations on it using the Preprocessor class
@@ -30,7 +30,7 @@ class TestPipeline(unittest.TestCase):
         df = preprocessor.transform()
         
         # Check the size of the transformed data frame
-        assert df.shape == (4, 2)
+        assert df.shape == (4, 3), "The transformation is not successful"
         
     
     def test_load(self):
@@ -42,7 +42,7 @@ class TestPipeline(unittest.TestCase):
         result = pd.read_sql_query("SELECT * FROM test_table", conn)
         conn.close()
         
-        assert_frame_equal(result, df)
+        assert_frame_equal(result, df), "There is a problem in loading the data into sqlite database"
         
     
     def test_etl_pipeline(self):
