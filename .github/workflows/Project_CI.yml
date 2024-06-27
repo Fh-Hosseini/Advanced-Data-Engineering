@@ -1,16 +1,16 @@
-name: /CI
+name: Project CI
 
 on:
   push:
     branches:
-      - main
+     - main
 
 jobs:
-  execute-pipeline:
-    runs-on: ubuntu-latest
+  project-test:
+    runs-on:  ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Set up Python 3.8
@@ -18,43 +18,14 @@ jobs:
         with:
           python-version: '3.8'
 
-      - name: Install Python dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./project/requirements.txt 
-          pip install pytest
+          pip install -r ./project/requirements.txt
 
 
-# name: Project CI
 
 
-# on:
-#   push:
-#     branches:
-#       - main
-
-
-# jobs:
-#   project-test:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout Repository
-#         uses: actions/checkout@v3
-#         with:
-#           path: main
-
-#       # Install python
-#       - name: Set up Python 3.11
-#         uses: actions/setup-python@v3
-#         with:
-#           python-version: '3.11'
-
-#       # Install Libraries and Requirements
-#       - name: Install Requirements
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install -r ./project/requirements.txt 
       
 #       # # Run grading feedback
 #       # - name: Run Tests
