@@ -1,0 +1,9 @@
+requirements.txtnumpy
+pandas
+requests
+sqlite3
+io
+os
+urllib
+unittest
+pandas.testing
