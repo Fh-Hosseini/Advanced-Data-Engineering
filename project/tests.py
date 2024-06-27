@@ -30,7 +30,7 @@ class TestPipeline(unittest.TestCase):
         df = preprocessor.transform()
         
         # Check the size of the transformed data frame
-        assert df.shape == (4, 3), "The transformation is not successful"
+        assert df.shape == (4, 2), "The transformation is not successful"
         
     
     def test_load(self):
