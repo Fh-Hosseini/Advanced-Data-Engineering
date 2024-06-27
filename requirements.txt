@@ -1,8 +1,0 @@
-requirements.txtnumpy
-pandas
-requests
-io
-os
-urllib
-unittest
-pandas.testing
