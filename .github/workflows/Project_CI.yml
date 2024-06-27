@@ -19,9 +19,9 @@ jobs:
 
       # Install python
       - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       # Install Libraries and Requirements
       - name: Install Requirements
