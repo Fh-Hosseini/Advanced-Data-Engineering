@@ -1,9 +1,13 @@
+import numpy as np
 import pandas as pd
 import requests
 import sqlite3
 import io
 import os
 import urllib.request
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 
 # Extract data from Http link
@@ -136,6 +140,75 @@ def analyse_pipeline(df_temperature, df_forest):
     return df_climate_change
 
 
+def plot(df_climate_change):
+    df_forest = df_climate_change['Forest area']
+    df_temperature = df_climate_change['Temperature']
+
+    # Keep common countries of two data frame
+    countries = pd.merge(df_temperature, df_forest, on='Country', how='inner')['Country']
+    df_temperature = df_temperature[df_temperature['Country'].isin(countries)]
+    df_forest = df_forest[df_forest['Country'].isin(countries)]
+    
+    
+    df_forest_change = pd.DataFrame({
+        'Year': df_forest.columns[3:], 
+        'Average_Forest_Area_Change': df_forest.iloc[:, 3:].mean(axis=0)
+        }).reset_index(drop=True)
+    df_forest_change['Year'] = df_forest_change['Year'].apply(lambda year: year[1:])
+    df_forest_change.dropna(inplace=True)
+    df_forest_change
+
+    
+    df_forest_change = pd.DataFrame({
+        'Year': df_forest.columns[3:],
+        'Average_Forest_Area_Change': df_forest.iloc[:, 3:].mean(axis=0)
+        }).reset_index(drop=True)
+    df_forest_change['Year'] = df_forest_change['Year'].apply(lambda year: year[1:])
+    df_forest_change.dropna(inplace=True)
+    df_forest_change
+
+    
+    scaler = StandardScaler()
+    columns_to_standardize = ['Average_Forest_Area_Change']
+
+    # Fit and transform the data
+    df_standardized = scaler.fit_transform(df_forest_change[['Average_Forest_Area_Change']])
+
+    # Convert the standardized data back to DataFrame
+    df_forest_change['Average_Forest_Area_Change'] = df_standardized
+
+
+    df_temperature_change = pd.DataFrame({
+    'Year': df_temperature.columns[1:],
+    'Average_Temperature_Change': df_temperature.iloc[:, 1:].mean(axis=0)
+    }).reset_index(drop=True)
+    df_temperature_change['Year'] = df_temperature_change['Year'].apply(lambda year: year[1:])
+    df_temperature_change.dropna(inplace=True)
+
+
+
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x=np.array(list(range(1992, 2023))), y='Average_Temperature_Change', data=df_temperature_change)
+    plt.plot(np.array(list(range(1992, 2023))), df_temperature_change['Average_Temperature_Change'])
+    plt.title('Temperature Changes from 1992 to 2020')
+    plt.xlabel('Year')
+    plt.ylabel('Temperature Changes')
+    plt.grid(True)
+    plt.show()
+    plt.savefig('Temperature.png')
+
+    
+
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x=np.array(list(range(1992, 2021))), y=df_forest_change['Average_Forest_Area_Change'])
+    plt.plot(np.array(list(range(1992, 2021))), df_forest_change['Average_Forest_Area_Change'])
+    plt.title('Forest Area Changes from 1992 to 2020')
+    plt.xlabel('Year')
+    plt.ylabel('Forest Area Changes')
+    plt.grid(True)
+    plt.show()
+    plt.savefig('Forest.png')
+    
 def main():
     # Define data sources and names related to Annual_Surface_Temperature dataset
     temperatur_url = "https://opendata.arcgis.com/datasets/4063314923d74187be9596f10d034914_0.csv"
@@ -149,8 +222,10 @@ def main():
     unused_columns = ['ObjectId', 'ISO2', 'ISO3', 'Source', 'CTS_Code', 'CTS_Name', 'CTS_Full_Descriptor']
     df_forest = etl_pipeline(forest_url, table_forest_name, unused_columns)
 
-    analyse_pipeline(df_temperature, df_forest)
-    
+    df_climate_change = analyse_pipeline(df_temperature, df_forest)
+    plot(df_climate_change)
 
 if __name__ == "__main__":
     main()
+
+
